@@ -1,8 +1,8 @@
 # kinect-rain
 
-##Getting Started
+## Getting Started
 
-###Required Dependencies
+### Required Dependencies
 
 Python
 
