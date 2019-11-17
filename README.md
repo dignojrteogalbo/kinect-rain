@@ -28,4 +28,4 @@ sudo apt-get install libusb-dev
 ```
 
 CMake
-* [Installation] (https://cgold.readthedocs.io/en/latest/first-step/installation.html)
+[Installation](https://cgold.readthedocs.io/en/latest/first-step/installation.html)
