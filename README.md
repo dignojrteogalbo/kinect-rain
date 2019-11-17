@@ -16,16 +16,8 @@ Tkinter
 sudo apt-get install python3-tk
 ```
 
-OpenKinect
+OpenKinect Dependencies
 
 ```
-sudo apt-get install freenect
+sudo apt-get install git cmake build-essential libusb-1.0-0-dev
 ```
-
-libusb
-```
-sudo apt-get install libusb-dev
-```
-
-CMake
-[Installation](https://cgold.readthedocs.io/en/latest/first-step/installation.html)
