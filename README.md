@@ -21,3 +21,8 @@ OpenKinect
 ```
 sudo apt-get install freenect
 ```
+
+libusb
+```
+sudo apt-get install libusb-dev
+```
