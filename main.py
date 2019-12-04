@@ -1,4 +1,4 @@
-import random, time, threading, freenect, numpy
+import random, freenect, numpy
 try:
     from tkinter import *
     import tkinter as tk
@@ -12,13 +12,16 @@ screen_height = 480 #main.winfo_screenheight()
 c = Canvas(main, bg='blue', width=screen_width, height=screen_height)
 
 refreshRate = 16 # per ms to move rain
-resolution = 15 # amount of columns and rows
-rainWidth = 1
+resolution = 10 # amount of columns and rows
+rainWidth = 5
 rainAmount = 100
-rainLength = 15
+rainLength = 10
 gravity = 0.5
 
 threshold = 150 # number between 0-255
+
+boxOutline = '' # set to 'black' or '' to show or hide box outlines
+textColor = '' # set to 'black' or '' to show or hide depth values
 
 drops = []
 dropsFallSpeed = []
@@ -34,12 +37,12 @@ def draw_graph(): # initialize grid
 
     for col in range(resolution):
         for row in range(resolution):
-            box = c.create_rectangle((screen_width/resolution)*row, (screen_height/resolution)*col, (screen_width/resolution)*(row+1), (screen_height/resolution)*(col+1), fill='', outline='black')
+            box = c.create_rectangle((screen_width/resolution)*row, (screen_height/resolution)*col, (screen_width/resolution)*(row+1), (screen_height/resolution)*(col+1), fill='', outline=boxOutline)
             x1 = c.coords(box)[0]
             x2 = c.coords(box)[2]
             y1 = c.coords(box)[1]
             y2 = c.coords(box)[3]
-            label = c.create_text(((x1+x2)/2, (y1+y2)/2), text=d3[int((y1+y2)/2)][int((x1+x2)/2)][0])
+            label = c.create_text(((x1+x2)/2, (y1+y2)/2), text=d3[int((y1+y2)/2)][int((x1+x2)/2)][0], fill=textColor)
             graph.append([x1, x2, y1, y2, box, label])
 
 def draw_drops(): #function to create a raindrop
@@ -66,8 +69,8 @@ def move_drops():
         y2 = c.coords(drops[drop])[3]
         rainDropObj = drops[drop]
 
-        for plot in range(len(activePlots)):
-            if c.coords(activePlots[plot])[0] <= x1 <= c.coords(activePlots[plot])[2] and c.coords(activePlots[plot])[1] <= y2 <= c.coords(activePlots[plot])[3] and c.itemcget(activePlots[plot], 'fill') != '':
+        for b in range(len(graph)):
+            if graph[b][0] <= x1 <= graph[b][1] and graph[b][2] <= y2 <= graph[b][3] and c.itemcget(graph[b][4], 'fill') != '':
                 dropsFallSpeed[drop] = rainSpeed
                 c.coords(rainDropObj, x1, randomPositionY, x2, randomPositionY+rainLength) #return raindrop to the top
 
@@ -80,12 +83,15 @@ def move_drops():
     for speed in range(len(dropsFallSpeed)): #adds factor of gravity to fallspeed
         dropsFallSpeed[speed] += gravity
 
-    for b in range(len(graph)): #update text and color or boxes and labels according to the data from the kinect
-        c.itemconfig(graph[b][5], text=d3[int(c.coords(graph[b][5])[1])][int(c.coords(graph[b][5])[0])][0])
-        if int(c.itemcget(graph[b][5], 'text')) >= threshold:
-            c.itemconfig(graph[b][4], fill='')
-        else:
+    for b in range(len(graph)):
+        c.itemconfig(graph[b][5], text=d3[int(c.coords(graph[b][5])[1])][int(c.coords(graph[b][5])[0])][0]) # d3[int(c.coords(graph[b][5])[1])][int(c.coords(graph[b][5])[0])][0]
+        if int(c.itemcget(graph[b][5], 'text')) <= threshold:
             c.itemconfig(graph[b][4], fill='green')
+            activePlots.append(graph[b][4])
+        else:
+            if graph[b][4] in activePlots:
+                c.itemconfig(graph[b][4], fill='')
+                activePlots.remove(graph[b][4])
 
     main.after(refreshRate, move_drops) #loops move_drops
 
