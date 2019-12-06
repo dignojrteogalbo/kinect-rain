@@ -11,18 +11,32 @@ screen_width = 480  #main.winfo_screenwidth() to make fullscreen
 screen_height = 480 #main.winfo_screenheight()
 c = Canvas(main, bg='blue', width=screen_width, height=screen_height)
 
-resolutionEntry = tk.Entry(main)
-rainAmountEntry = tk.Entry(main)
-rainWidthEntry = tk.Entry(main)
-rainLengthEntry = tk.Entry(main)
-gravityEntry = tk.Entry(main)
-
 refreshRate = 16 # per ms to move rain
 resolution = 10 # amount of columns and rows
 rainWidth = 5
 rainAmount = 100
 rainLength = 10
 gravity = 0.5
+
+resL = tk.Label(main, text='Resolution')
+resolutionEntry = tk.Entry(main, textvariable=resolution)
+resolutionEntry.insert(END, str(resolution))
+
+rAmtL = tk.Label(main, text='Rain Amount')
+rainAmountEntry = tk.Entry(main)
+rainAmountEntry.insert(END, str(rainAmount))
+
+rWidL = tk.Label(main, text='Rain Width')
+rainWidthEntry = tk.Entry(main)
+rainWidthEntry.insert(END, str(rainWidth))
+
+rLenL = tk.Label(main, text='Rain Length')
+rainLengthEntry = tk.Entry(main)
+rainLengthEntry.insert(END, str(rainLength))
+
+gravL = tk.Label(main, text='Gravity')
+gravityEntry = tk.Entry(main)
+gravityEntry.insert(END, str(gravity))
 
 threshold = 150 # number between 0-255
 
@@ -101,20 +115,26 @@ def move_drops():
 
     main.after(refreshRate, move_drops) #loops move_drops
 
-# def retrieve_input():
-#     resolution = 10 # amount of columns and rows
-#     rainWidth = 5
-#     rainAmount = 100
-#     rainLength = 10
-#     gravity = 0.5
+def retrieve_input():
+    resolution = resolutionEntry.get
+    rainWidth = rainWidthEntry.get
+    rainAmount = rainAmountEntry.get
+    rainLength = rainLengthEntry.get
+    gravity = gravityEntry.get
 
 c.grid(row=0, rowspan=5, column=0)
 
-resolutionEntry.grid(row=0, column=1)
-rainWidthEntry.grid(row=1, column=1)
-rainAmountEntry.grid(row=2, column=1)
-rainLengthEntry.grid(row=3, column=1)
-gravityEntry.grid(row=4, column=1)
+resL.grid(row=0, column=2)
+rAmtL.grid(row=1, column=2)
+rWidL.grid(row=2, column=2)
+rLenL.grid(row=3, column=2)
+gravL.grid(row=4, column=2)
+
+resolutionEntry.grid(row=0, column=3)
+rainWidthEntry.grid(row=1, column=3)
+rainAmountEntry.grid(row=2, column=3)
+rainLengthEntry.grid(row=3, column=3)
+gravityEntry.grid(row=4, column=3)
 
 draw_graph() # init graph
 main.after(refreshRate, move_drops) #loops move_drops
