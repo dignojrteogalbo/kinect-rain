@@ -11,32 +11,32 @@ screen_width = 480  #main.winfo_screenwidth() to make fullscreen
 screen_height = 480 #main.winfo_screenheight()
 c = Canvas(main, bg='blue', width=screen_width, height=screen_height)
 
-refreshRate = 16 # per ms to move rain
-resolution = 10 # amount of columns and rows
-rainWidth = 5
-rainAmount = 100
-rainLength = 10
-gravity = 0.5
+refreshRate = 16 # per ms to movInt
+resolution = tk.StringVar() # amount of columns and rows
+rainWidth = tk.StringVar()
+rainAmount = tk.StringVar()
+rainLength = tk.StringVar()
+gravity = tk.StringVar()
 
 resL = tk.Label(main, text='Resolution')
 resolutionEntry = tk.Entry(main, textvariable=resolution)
-resolutionEntry.insert(END, str(resolution))
+resolutionEntry.insert(END, '10')
 
 rAmtL = tk.Label(main, text='Rain Amount')
-rainAmountEntry = tk.Entry(main)
-rainAmountEntry.insert(END, str(rainAmount))
+rainAmountEntry = tk.Entry(main, textvariable=rainAmount)
+rainAmountEntry.insert(END, '100')
 
 rWidL = tk.Label(main, text='Rain Width')
-rainWidthEntry = tk.Entry(main)
-rainWidthEntry.insert(END, str(rainWidth))
+rainWidthEntry = tk.Entry(main, textvariable=rainWidth)
+rainWidthEntry.insert(END, '5')
 
 rLenL = tk.Label(main, text='Rain Length')
-rainLengthEntry = tk.Entry(main)
-rainLengthEntry.insert(END, str(rainLength))
+rainLengthEntry = tk.Entry(main, textvariable=rainLength)
+rainLengthEntry.insert(END, '10')
 
 gravL = tk.Label(main, text='Gravity')
-gravityEntry = tk.Entry(main)
-gravityEntry.insert(END, str(gravity))
+gravityEntry = tk.Entry(main, textvariable=gravity)
+gravityEntry.insert(END, '0.5')
 
 threshold = 150 # number between 0-255
 
@@ -47,6 +47,12 @@ drops = []
 dropsFallSpeed = []
 graph = []
 activePlots = []
+
+resolution = int(resolutionEntry.get())
+rainWidth = int(rainWidthEntry.get())
+rainAmount = int(rainAmountEntry.get())
+rainLength = int(rainLengthEntry.get())
+gravity = float(gravityEntry.get())
 
 def draw_graph(): # initialize grid
     global depth
@@ -115,18 +121,19 @@ def move_drops():
 
     main.after(refreshRate, move_drops) #loops move_drops
 
-def retrieve_input():
-    resolution = resolutionEntry.get
-    rainWidth = rainWidthEntry.get
-    rainAmount = rainAmountEntry.get
-    rainLength = rainLengthEntry.get
-    gravity = gravityEntry.get
+def retrieve_input(event):
+    print('enter')
+    resolution = int(resolutionEntry.get())
+    rainWidth = int(rainWidthEntry.get())
+    rainAmount = int(rainAmountEntry.get())
+    rainLength = int(rainLengthEntry.get())
+    gravity = float(gravityEntry.get())
 
 c.grid(row=0, rowspan=5, column=0)
 
 resL.grid(row=0, column=2)
-rAmtL.grid(row=1, column=2)
-rWidL.grid(row=2, column=2)
+rWidL.grid(row=1, column=2)
+rAmtL.grid(row=2, column=2)
 rLenL.grid(row=3, column=2)
 gravL.grid(row=4, column=2)
 
@@ -137,5 +144,6 @@ rainLengthEntry.grid(row=3, column=3)
 gravityEntry.grid(row=4, column=3)
 
 draw_graph() # init graph
+main.bind('<Return>', retrieve_input)
 main.after(refreshRate, move_drops) #loops move_drops
 main.mainloop()
