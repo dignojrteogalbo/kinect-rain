@@ -1,4 +1,4 @@
-import random, freenect, numpy
+import random, numpy#, freenect
 try:
     from tkinter import *
     import tkinter as tk
@@ -54,22 +54,18 @@ rainAmount = int(rainAmountEntry.get())
 rainLength = int(rainLengthEntry.get())
 gravity = float(gravityEntry.get())
 
-def draw_graph(): # initialize grid
-    global depth
-    global d3
-
-    depth,_ = freenect.sync_get_depth() # get frame from kinect
-    d3 = numpy.dstack((depth, depth, depth)).astype(numpy.uint8) # stack data of frames into multidimensional array organized like (y, x, depth)
-
-    for col in range(resolution):
-        for row in range(resolution):
-            box = c.create_rectangle((screen_width/resolution)*row, (screen_height/resolution)*col, (screen_width/resolution)*(row+1), (screen_height/resolution)*(col+1), fill='', outline=boxOutline)
-            x1 = c.coords(box)[0]
-            x2 = c.coords(box)[2]
-            y1 = c.coords(box)[1]
-            y2 = c.coords(box)[3]
-            label = c.create_text(((x1+x2)/2, (y1+y2)/2), text=d3[int((y1+y2)/2)][int((x1+x2)/2)][0], fill=textColor)
-            graph.append([x1, x2, y1, y2, box, label])
+def retrieve_input(event):
+    global resolution, rainWidth, rainAmount, rainLength, gravity, drops, dropsFallSpeed, graph
+    resolution = int(resolutionEntry.get())
+    rainWidth = int(rainWidthEntry.get())
+    rainAmount = int(rainAmountEntry.get())
+    rainLength = int(rainLengthEntry.get())
+    gravity = float(gravityEntry.get())
+    drops = []
+    dropsFallSpeed = []
+    graph = []
+    c.delete('all')
+    draw_graph()
 
 def draw_drops(): #function to create a raindrop
     randomPositionX = random.randint(0, screen_width)
@@ -78,8 +74,24 @@ def draw_drops(): #function to create a raindrop
     drops.append(rainDrop)
     dropsFallSpeed.append(1)
 
-for i in range(rainAmount): #draws raindrops
-    draw_drops()
+def draw_graph(): # initialize grid
+    global depth, d3
+
+    depth,_ = freenect.sync_get_depth() # get frame from kinect
+    d3 = numpy.dstack((depth, depth, depth)).astype(numpy.uint8) # stack data of frames into multidimensional array organized like (y, x, depth)
+
+    for i in range(rainAmount): #draws raindrops
+        draw_drops()
+
+    for col in range(resolution):
+        for row in range(resolution):
+            box = c.create_rectangle((screen_width/resolution)*row, (screen_height/resolution)*col, (screen_width/resolution)*(row+1), (screen_height/resolution)*(col+1), fill='', outline=boxOutline)
+            x1 = c.coords(box)[0]
+            x2 = c.coords(box)[2]
+            y1 = c.coords(box)[1]
+            y2 = c.coords(box)[3]
+            label = c.create_text(((x1+x2)/2, (y1+y2)/2), fill=textColor) # text=d3[int((y1+y2)/2)][int((x1+x2)/2)][0], fill=textColor)
+            graph.append([x1, x2, y1, y2, box, label])
 
 def move_drops():
     depth,_ = freenect.sync_get_depth() # get new frame from kinect
@@ -120,14 +132,6 @@ def move_drops():
                 activePlots.remove(graph[b][4])
 
     main.after(refreshRate, move_drops) #loops move_drops
-
-def retrieve_input(event):
-    print('enter')
-    resolution = int(resolutionEntry.get())
-    rainWidth = int(rainWidthEntry.get())
-    rainAmount = int(rainAmountEntry.get())
-    rainLength = int(rainLengthEntry.get())
-    gravity = float(gravityEntry.get())
 
 c.grid(row=0, rowspan=5, column=0)
 
