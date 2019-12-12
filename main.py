@@ -1,4 +1,4 @@
-import random, numpy#, freenect
+import random, numpy, freenect
 try:
     from tkinter import *
     import tkinter as tk
